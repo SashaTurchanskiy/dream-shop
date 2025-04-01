@@ -1,24 +1,52 @@
 package com.dailycodework.dream_shop.service.product;
 
 import com.dailycodework.dream_shop.exception.ProductNotFoundException;
+import com.dailycodework.dream_shop.model.Category;
 import com.dailycodework.dream_shop.model.Product;
+import com.dailycodework.dream_shop.repository.CategoryRepo;
 import com.dailycodework.dream_shop.repository.ProductRepository;
+import com.dailycodework.dream_shop.request.AddProductRequest;
+
+import com.dailycodework.dream_shop.request.ProductUpdateRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
+
 
 @Service
 public class ProductService implements IProductService{
 
     private final ProductRepository productRepository;
+    private final CategoryRepo categoryRepo;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, CategoryRepo categoryRepo) {
         this.productRepository = productRepository;
+        this.categoryRepo = categoryRepo;
     }
 
     @Override
-    public Product addProduct(Product product) {
-        return null;
+    public Product addProduct(AddProductRequest req) {
+        Category category = Optional.ofNullable(categoryRepo.findByName(req.getCategory().getName()))
+                .orElseGet(() -> {
+                    Category newCategory = new Category(req.getCategory().getName());
+                    return categoryRepo.save(newCategory);
+                });
+        req.setCategory(category);
+        return productRepository.save(createProduct(req, category));
+    }
+
+    private Product createProduct(AddProductRequest req, Category category) {
+        return new Product(
+                req.getName(),
+                req.getBrand(),
+                req.getPrice(),
+                req.getInventory(),
+                req.getDescription(),
+                category
+        );
+
     }
 
     @Override
@@ -40,8 +68,24 @@ public class ProductService implements IProductService{
     }
 
     @Override
-    public void updateProduct(Product product, Long productId) {
+    public Product updateProduct(ProductUpdateRequest req, Long productId) throws ProductNotFoundException {
+        return productRepository.findById(productId)
+                .map(existingProduct -> updateExistingProduct(existingProduct, req))
+                .map(productRepository::save)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
+    }
+
+    private Product updateExistingProduct(Product existingProduct, ProductUpdateRequest req) {
+        existingProduct.setName(req.getName());
+        existingProduct.setBrand(req.getBrand());
+        existingProduct.setDescription(req.getDescription());
+        existingProduct.setPrice(req.getPrice());
+        existingProduct.setInventory(req.getInventory());
+
+        Category category = categoryRepo.findByName(req.getCategory().getName());
+        existingProduct.setCategory(category);
+        return existingProduct;
     }
 
     @Override
@@ -56,21 +100,21 @@ public class ProductService implements IProductService{
 
     @Override
     public List<Product> getProductsByCategoryAndBrand(String category, String brand) {
-        return List.of();
+        return productRepository.findByCategoryNameAndBrand(category, brand);
     }
 
     @Override
     public List<Product> getProductsByName(String name) {
-        return List.of();
+        return productRepository.findByName(name);
     }
 
     @Override
     public List<Product> getProductsByBrandAndName(String brand, String name) {
-        return List.of();
+        return productRepository.findByBrandAndName(brand, name);
     }
 
     @Override
     public Long countProductByBrandAndName(String brand, String name) {
-        return 0L;
+        return productRepository.countByBrandAndName(brand, name);
     }
 }

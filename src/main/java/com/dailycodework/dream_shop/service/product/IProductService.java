@@ -2,16 +2,18 @@ package com.dailycodework.dream_shop.service.product;
 
 import com.dailycodework.dream_shop.exception.ProductNotFoundException;
 import com.dailycodework.dream_shop.model.Product;
+import com.dailycodework.dream_shop.request.AddProductRequest;
+import com.dailycodework.dream_shop.request.ProductUpdateRequest;
 
 import java.util.List;
 
 public interface IProductService {
 
-    Product addProduct(Product product);
+    Product addProduct(AddProductRequest req);
     List<Product> getAllProducts();
     Product getProductById(Long id) throws ProductNotFoundException;
     void deleteProductById(Long id) throws ProductNotFoundException;
-    void updateProduct(Product product, Long productId);
+    Product updateProduct(ProductUpdateRequest req, Long productId) throws ProductNotFoundException;
     List<Product> getProductsByCategory(String category);
     List<Product> getProductsByBrand(String brand);
     List<Product> getProductsByCategoryAndBrand(String category, String brand);
