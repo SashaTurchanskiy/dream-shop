@@ -1,6 +1,7 @@
 package com.dailycodework.dream_shop.exception;
 
 public class AlreadyExistException extends Exception {
-    public AlreadyExistException(String categoryAlreadyExists) {
+    public AlreadyExistException(String message) {
+        super(message);
     }
 }
