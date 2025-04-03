@@ -1,6 +1,7 @@
 package com.dailycodework.dream_shop.service.product;
 
 import com.dailycodework.dream_shop.exception.ProductNotFoundException;
+import com.dailycodework.dream_shop.exception.ResourceNotFoundException;
 import com.dailycodework.dream_shop.model.Product;
 import com.dailycodework.dream_shop.request.AddProductRequest;
 import com.dailycodework.dream_shop.request.ProductUpdateRequest;
@@ -11,9 +12,9 @@ public interface IProductService {
 
     Product addProduct(AddProductRequest req);
     List<Product> getAllProducts();
-    Product getProductById(Long id) throws ProductNotFoundException;
+    Product getProductById(Long id) throws ProductNotFoundException, ResourceNotFoundException;
     void deleteProductById(Long id) throws ProductNotFoundException;
-    Product updateProduct(ProductUpdateRequest req, Long productId) throws ProductNotFoundException;
+    Product updateProduct(ProductUpdateRequest req, Long productId) throws ProductNotFoundException, ResourceNotFoundException;
     List<Product> getProductsByCategory(String category);
     List<Product> getProductsByBrand(String brand);
     List<Product> getProductsByCategoryAndBrand(String category, String brand);

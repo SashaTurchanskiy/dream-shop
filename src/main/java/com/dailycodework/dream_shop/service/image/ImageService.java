@@ -44,7 +44,7 @@ public class ImageService implements IImageService{
     }
 
     @Override
-    public List<ImageDto> saveImages(List<MultipartFile> files, Long productId) throws ProductNotFoundException {
+    public List<ImageDto> saveImages(List<MultipartFile> files, Long productId) throws ResourceNotFoundException {
         Product product = productService.getProductById(productId);
 
         List<ImageDto> savedImageDto = new ArrayList<>();
