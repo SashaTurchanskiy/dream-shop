@@ -8,6 +8,7 @@ import com.dailycodework.dream_shop.model.Product;
 import com.dailycodework.dream_shop.repository.ImageRepo;
 import com.dailycodework.dream_shop.service.product.IProductService;
 import com.dailycodework.dream_shop.service.product.ProductService;
+import org.apache.tika.Tika;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,16 +53,17 @@ public class ImageService implements IImageService{
             try {
                 Image image = new Image();
                 image.setFileName(file.getOriginalFilename());
-                image.setFileName(file.getContentType());
+                image.setFileType(getExtension(file.getOriginalFilename()));
                 image.setImage(new SerialBlob(file.getBytes()));
                 image.setProduct(product);
 
-                String buildDownloadUrl = "/api/v1/images/image/download/" + image.getId();
-                String downloadUri = buildDownloadUrl + image.getId();
-                image.setDownloadUri(downloadUri);
                 Image savedImage = imageRepo.save(image);
 
-                savedImage.setDownloadUri(buildDownloadUrl + savedImage.getId());
+                String buildDownloadUrl = "/api/v1/images/image/download/" + savedImage.getId();
+                //String downloadUri = buildDownloadUrl + image.getId();
+                image.setDownloadUri(buildDownloadUrl);
+
+                //savedImage.setDownloadUri(buildDownloadUrl + savedImage.getId());
                 imageRepo.save(savedImage);
 
                 ImageDto imageDto = new ImageDto();
@@ -75,6 +77,10 @@ public class ImageService implements IImageService{
             }
         }
         return savedImageDto;
+    }
+    private String getExtension(String fileName){
+        Tika tika = new Tika();
+        return tika.detect(fileName);
     }
 
     @Override

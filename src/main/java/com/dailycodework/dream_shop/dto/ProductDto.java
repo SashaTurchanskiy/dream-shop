@@ -1,47 +1,22 @@
-package com.dailycodework.dream_shop.model;
+package com.dailycodework.dream_shop.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
+import com.dailycodework.dream_shop.model.Category;
+import com.dailycodework.dream_shop.model.Image;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 
-@Entity
-public class Product {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ProductDto {
     private Long id;
     private String name;
     private String brand;
     private BigDecimal price;
     private int inventory;
     private String description;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "category_id")
-    @JsonBackReference
     private Category category;
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Image> images;
-
-    public Product() {
-    }
-
-    public Product(String name, String brand, BigDecimal price, int inventory, String description, Category category) {
-        this.name = name;
-        this.brand = brand;
-        this.price = price;
-        this.inventory = inventory;
-        this.description = description;
-        this.category = category;
-    }
+    private List<ImageDto> images;
 
     public Long getId() {
         return id;
@@ -99,11 +74,11 @@ public class Product {
         this.category = category;
     }
 
-    public List<Image> getImages() {
+    public List<ImageDto> getImages() {
         return images;
     }
 
-    public void setImages(List<Image> images) {
+    public void setImages(List<ImageDto> images) {
         this.images = images;
     }
 }

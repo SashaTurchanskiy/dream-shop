@@ -1,5 +1,6 @@
 package com.dailycodework.dream_shop.controller;
 
+import com.dailycodework.dream_shop.dto.ProductDto;
 import com.dailycodework.dream_shop.exception.ProductNotFoundException;
 import com.dailycodework.dream_shop.exception.ResourceNotFoundException;
 import com.dailycodework.dream_shop.model.Product;
@@ -24,15 +25,20 @@ public class ProductController {
     @GetMapping("/all")
     private ResponseEntity<ApiResponse> getAllProducts() {
         List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(new ApiResponse("success", products));
+        List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
+        return ResponseEntity.ok(new ApiResponse("success", convertedProducts));
     }
-    @GetMapping("/product/{productId}/product")
-    public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId) throws ProductNotFoundException {
+    @GetMapping("/product/{productId}")
+    public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId) throws ProductNotFoundException, ResourceNotFoundException {
         try {
-            Product product = productService.getProductById(productId);
-            return ResponseEntity.ok(new ApiResponse("success", product));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ApiResponse( e.getMessage(), null));
+            var product = productService.getProductById(productId);
+            var productDto = productService.convertToDto(product);
+            if (product == null) {
+                throw new ProductNotFoundException("Product not found");
+            }
+            return ResponseEntity.ok(new ApiResponse("success", productDto));
+        } catch (ProductNotFoundException e) {
+            return ResponseEntity.status(404).body(new ApiResponse(e.getMessage(), null));
         }
     }
     @PostMapping("/add")
@@ -53,7 +59,7 @@ public class ProductController {
             return ResponseEntity.status(404).body(new ApiResponse(e.getMessage(), null));
         }
     }
-    @DeleteMapping("/product/{productId}/delete")
+    @DeleteMapping("/delete/{productId}")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId){
         try {
             productService.deleteProductById(productId);
@@ -69,7 +75,8 @@ public class ProductController {
             if (product.isEmpty()) {
                 return ResponseEntity.status(404).body(new ApiResponse("Product not found", null));
             }
-            return ResponseEntity.ok(new ApiResponse("success", product));
+            List<ProductDto> convertedProducts = productService.getConvertedProducts(product);
+            return ResponseEntity.ok(new ApiResponse("success", convertedProducts));
         }catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiResponse("Failed to fetch products", e.getMessage()));
         }
@@ -82,7 +89,8 @@ public class ProductController {
             if (products.isEmpty()) {
                 return ResponseEntity.status(404).body(new ApiResponse("Product not found", null));
             }
-            return ResponseEntity.ok(new ApiResponse("success", products));
+            List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
+            return ResponseEntity.ok(new ApiResponse("success", convertedProducts));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiResponse("Failed to fetch products", e.getMessage()));
         }
@@ -94,7 +102,8 @@ public class ProductController {
             if (products.isEmpty()) {
                 return ResponseEntity.status(404).body(new ApiResponse("Product not found", null));
             }
-            return ResponseEntity.ok(new ApiResponse("success", products));
+            List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
+            return ResponseEntity.ok(new ApiResponse("success", convertedProducts));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiResponse("Failed to fetch products", e.getMessage()));
         }
@@ -106,7 +115,8 @@ public class ProductController {
             if (products.isEmpty()) {
                 return ResponseEntity.status(404).body(new ApiResponse("Product not found", null));
             }
-            return ResponseEntity.ok(new ApiResponse("success", products));
+            List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
+            return ResponseEntity.ok(new ApiResponse("success", convertedProducts));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiResponse("Failed to fetch products", e.getMessage()));
         }
@@ -118,7 +128,8 @@ public class ProductController {
             if (products.isEmpty()) {
                 return ResponseEntity.status(404).body(new ApiResponse("Product not found", null));
             }
-            return ResponseEntity.ok(new ApiResponse("success", products));
+            List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
+            return ResponseEntity.ok(new ApiResponse("success", convertedProducts));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiResponse("Failed to fetch products", e.getMessage()));
         }

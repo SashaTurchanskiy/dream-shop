@@ -28,8 +28,8 @@ public class ImageController {
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse> saveImages(@RequestParam List<MultipartFile> file, @RequestParam Long productId) {
         try {
-            List<ImageDto> imageDtos = imageService.saveImages(file, productId);
-            return ResponseEntity.ok(new ApiResponse("Images saved successfully", imageDtos));
+            List<ImageDto> imageDto = imageService.saveImages(file, productId);
+            return ResponseEntity.ok(new ApiResponse("Images saved successfully", imageDto));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiResponse("Failed to save images", e.getMessage()));
         }
@@ -37,11 +37,16 @@ public class ImageController {
     }
     @GetMapping("/image/download/{imageId}")
     public ResponseEntity<Resource> downloadImage(@PathVariable Long imageId) throws SQLException, ResourceNotFoundException {
-        Image image = imageService.getImageById(imageId);
-        ByteArrayResource resource = new ByteArrayResource(image.getImage().getBytes(1, (int) image.getImage().length()));
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(image.getFileType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
-                .body(resource);
+        try {
+            Image image = imageService.getImageById(imageId);
+            ByteArrayResource resource = new ByteArrayResource(image.getImage().getBytes(1, (int) image.getImage().length()));
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(image.getFileType()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
+                    .body(resource);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
     @PutMapping("/image/{imageId}/update")
     public ResponseEntity<ApiResponse> updateImage(@RequestBody MultipartFile file, @PathVariable Long imageId) {

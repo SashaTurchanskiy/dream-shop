@@ -1,5 +1,6 @@
 package com.dailycodework.dream_shop.service.product;
 
+import com.dailycodework.dream_shop.dto.ProductDto;
 import com.dailycodework.dream_shop.exception.ProductNotFoundException;
 import com.dailycodework.dream_shop.exception.ResourceNotFoundException;
 import com.dailycodework.dream_shop.model.Product;
@@ -22,9 +23,7 @@ public interface IProductService {
     List<Product> getProductsByBrandAndName(String brand, String name);
     Long countProductByBrandAndName(String brand, String name);
 
+    List<ProductDto> getConvertedProducts(List<Product> products);
 
-
-    
-
-
+    ProductDto convertToDto(Product product);
 }
