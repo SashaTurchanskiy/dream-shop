@@ -9,29 +9,35 @@ import com.dailycodework.dream_shop.repository.CartItemRepo;
 import com.dailycodework.dream_shop.repository.CartRepo;
 import com.dailycodework.dream_shop.service.product.IProductService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
 @Service
-public class CartItemService implements ICartItemService {
-
-    private final CartItemRepo cartItemRepo;
+public class CartItemService  implements ICartItemService{
+    private final CartItemRepo cartItemRepository;
+    private final CartRepo cartRepository;
     private final IProductService productService;
     private final ICartService cartService;
-    private final CartRepo cartRepo;
 
-    public CartItemService(CartItemRepo cartItemRepo, IProductService productService, ICartService cartService, CartRepo cartRepo) {
-        this.cartItemRepo = cartItemRepo;
+    public CartItemService(CartItemRepo cartItemRepository, CartRepo cartRepository, IProductService productService, ICartService cartService) {
+        this.cartItemRepository = cartItemRepository;
+        this.cartRepository = cartRepository;
         this.productService = productService;
         this.cartService = cartService;
-        this.cartRepo = cartRepo;
     }
 
     @Override
-    public void addCartToItem(Long cartId, Long productId, int quantity) throws ProductNotFoundException, ResourceNotFoundException {
+    @Transactional
+    public void addItemToCart(Long cartId, Long productId, int quantity) throws ProductNotFoundException, ResourceNotFoundException {
+        //1. Get the cart
+        //2. Get the product
+        //3. Check if the product already in the cart
+        //4. If Yes, then increase the quantity with the requested quantity
+        //5. If No, then initiate a new CartItem entry.
         Cart cart = cartService.getCart(cartId);
         Product product = productService.getProductById(productId);
-        CartItem cartItem = cart.getCartItems()
+        CartItem cartItem = cart.getItems()
                 .stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst().orElse(new CartItem());
@@ -39,51 +45,51 @@ public class CartItemService implements ICartItemService {
             cartItem.setCart(cart);
             cartItem.setProduct(product);
             cartItem.setQuantity(quantity);
-           cartItem.setUnitPrice(product.getPrice());
+            cartItem.setUnitPrice(product.getPrice());
         }
         else {
             cartItem.setQuantity(cartItem.getQuantity() + quantity);
         }
         cartItem.setTotalPrice();
         cart.addItem(cartItem);
-        cartItemRepo.save(cartItem);
-        cartRepo.save(cart);
-
+        cartItemRepository.save(cartItem);
+        cartRepository.save(cart);
     }
 
     @Override
     public void removeItemFromCart(Long cartId, Long productId) throws ResourceNotFoundException {
         Cart cart = cartService.getCart(cartId);
-        CartItem cartItem = getCartitem(cartId, productId);
-        cart.removeItem(cartItem);
-        cartRepo.save(cart);
-
+        CartItem itemToRemove = getCartItem(cartId, productId);
+        cart.removeItem(itemToRemove);
+        cartRepository.save(cart);
     }
 
     @Override
     public void updateItemQuantity(Long cartId, Long productId, int quantity) throws ResourceNotFoundException {
         Cart cart = cartService.getCart(cartId);
-        cart.getCartItems()
+        cart.getItems()
                 .stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst()
-                        .ifPresent(item -> {
-                                item.setQuantity(quantity);
-                        item.setUnitPrice(item.getProduct().getPrice());
-                        item.setTotalPrice();
-                        });
-        BigDecimal totalAmount = cart.getTotalAmount();
-        cart.setTotalAmount(totalAmount);
-        cartRepo.save(cart);
+                .ifPresent(item -> {
+                    item.setQuantity(quantity);
+                    item.setUnitPrice(item.getProduct().getPrice());
+                    item.setTotalPrice();
+                });
+        BigDecimal totalAmount = cart.getItems()
+                .stream().map(CartItem ::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        cart.setTotalAmount(totalAmount);
+        cartRepository.save(cart);
     }
+
     @Override
-    public CartItem getCartitem(Long cartId, Long productId) throws ResourceNotFoundException {
+    public CartItem getCartItem(Long cartId, Long productId) throws ResourceNotFoundException {
         Cart cart = cartService.getCart(cartId);
-       return cart.getCartItems()
+        return  cart.getItems()
                 .stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
-                .findFirst().orElseThrow(() -> new ResourceNotFoundException(" Item not found"));
-
+                .findFirst().orElseThrow(() -> new ResourceNotFoundException("Item not found"));
     }
 }
