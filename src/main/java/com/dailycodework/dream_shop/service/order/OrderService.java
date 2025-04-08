@@ -1,0 +1,68 @@
+package com.dailycodework.dream_shop.service.order;
+
+import com.dailycodework.dream_shop.enums.OrderStatus;
+import com.dailycodework.dream_shop.exception.ResourceNotFoundException;
+import com.dailycodework.dream_shop.model.Cart;
+import com.dailycodework.dream_shop.model.Order;
+import com.dailycodework.dream_shop.model.OrderItem;
+import com.dailycodework.dream_shop.model.Product;
+import com.dailycodework.dream_shop.repository.OrderRepo;
+import com.dailycodework.dream_shop.repository.ProductRepository;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+public class OrderService implements IOrderService {
+
+    private final OrderRepo orderRepo;
+    private final ProductRepository productRepository;
+
+    public OrderService(OrderRepo orderRepo, ProductRepository productRepository) {
+        this.orderRepo = orderRepo;
+        this.productRepository = productRepository;
+    }
+    @Override
+    public Order placeOrder(Long userId) {
+        return null;
+    }
+
+    private Order createOrder(Cart cart){
+        Order order = new Order();
+        //set the user...
+        order.setOrderStatus(OrderStatus.PENDING);
+        order.setOrderDate(LocalDate.now());
+        return order;
+    }
+
+    private List<OrderItem> createOrderItems(Order order, Cart cart){
+        return cart.getItems().stream().map(cartItem ->{
+            Product product = cartItem.getProduct();
+            product.setInventory(product.getInventory() - cartItem.getQuantity());
+            productRepository.save(product);
+            return new OrderItem(
+                    order,
+                    product,
+                    cartItem.getQuantity(),
+                    product.getPrice());
+        }).toList();
+
+    }
+
+    private BigDecimal calculateTotalAmount(List<OrderItem> orderItems) {
+        return orderItems.stream()
+                .map(item -> item.getPrice()
+                        .multiply(new BigDecimal(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    }
+
+
+    @Override
+    public Order getOrder(Long orderId) throws ResourceNotFoundException {
+        return orderRepo.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+    }
+}
