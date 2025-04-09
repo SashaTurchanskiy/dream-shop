@@ -10,4 +10,6 @@ public interface ICartService {
     void clearCart(Long id) throws ResourceNotFoundException;
     BigDecimal getTotalPrice(Long id) throws ResourceNotFoundException;
     Long  initializeNewCart();
+
+    Cart getCartByUserId(Long userId);
 }

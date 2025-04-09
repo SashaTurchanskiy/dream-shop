@@ -51,4 +51,9 @@ public class CartService implements ICartService {
         newCart.setId(newCartId);
         return cartRepo.save(newCart).getId();
     }
+
+    @Override
+    public Cart getCartByUserId(Long userId) {
+        return cartRepo.findByUserId(userId);
+    }
 }
