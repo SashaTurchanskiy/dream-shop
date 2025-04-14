@@ -7,11 +7,13 @@ import com.dailycodework.dream_shop.model.CartItem;
 import com.dailycodework.dream_shop.model.Product;
 import com.dailycodework.dream_shop.repository.CartItemRepo;
 import com.dailycodework.dream_shop.repository.CartRepo;
+import com.dailycodework.dream_shop.repository.ProductRepository;
 import com.dailycodework.dream_shop.service.product.IProductService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Service
 public class CartItemService  implements ICartItemService{
@@ -20,11 +22,13 @@ public class CartItemService  implements ICartItemService{
     private final IProductService productService;
     private final ICartService cartService;
 
+
     public CartItemService(CartItemRepo cartItemRepository, CartRepo cartRepository, IProductService productService, ICartService cartService) {
         this.cartItemRepository = cartItemRepository;
         this.cartRepository = cartRepository;
         this.productService = productService;
         this.cartService = cartService;
+
     }
 
     @Override
@@ -54,7 +58,9 @@ public class CartItemService  implements ICartItemService{
         cart.addItem(cartItem);
         cartItemRepository.save(cartItem);
         cartRepository.save(cart);
-    }
+
+
+}
 
     @Override
     public void removeItemFromCart(Long cartId, Long productId) throws ResourceNotFoundException {

@@ -11,4 +11,6 @@ public interface IOrderService {
     OrderDto getOrder(Long orderId) throws ResourceNotFoundException;
 
     List<OrderDto> getUserOrders(Long userId);
+
+    OrderDto convertToDto(Order order);
 }

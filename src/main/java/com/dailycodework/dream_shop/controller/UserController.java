@@ -1,5 +1,6 @@
 package com.dailycodework.dream_shop.controller;
 
+import com.dailycodework.dream_shop.dto.UserDto;
 import com.dailycodework.dream_shop.exception.AlreadyExistException;
 import com.dailycodework.dream_shop.exception.ResourceNotFoundException;
 import com.dailycodework.dream_shop.model.User;
@@ -23,7 +24,8 @@ public class UserController {
     public ResponseEntity<ApiResponse> getUserById(@PathVariable Long userId) throws ResourceNotFoundException {
         try {
             User user = userService.getUserById(userId);
-            return ResponseEntity.ok(new ApiResponse("User found successfully", user));
+            UserDto userDto = userService.convertToDto(user);
+            return ResponseEntity.ok(new ApiResponse("User found successfully", userDto));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(404).body(new ApiResponse("User not found", e.getMessage()));
         }
@@ -32,7 +34,8 @@ public class UserController {
     public ResponseEntity<ApiResponse> createUser(@RequestBody CreateUserRequest req) throws ResourceNotFoundException {
         try {
             User createdUser = userService.createUser(req);
-            return ResponseEntity.ok(new ApiResponse("User created successfully", createdUser));
+            UserDto userDto = userService.convertToDto(createdUser);
+            return ResponseEntity.ok(new ApiResponse("User created successfully", userDto));
         } catch (ResourceNotFoundException | AlreadyExistException e) {
             return ResponseEntity.status(404).body(new ApiResponse("User not found", e.getMessage()));
         }
@@ -41,7 +44,8 @@ public class UserController {
     public ResponseEntity<ApiResponse> updateUser(@RequestBody UserUpdateRequest request, @PathVariable Long userId){
         try {
             User user = userService.updateUser(request, userId);
-            return ResponseEntity.ok(new ApiResponse("User updated successfully", user));
+            UserDto userDto = userService.convertToDto(user);
+            return ResponseEntity.ok(new ApiResponse("User updated successfully", userDto));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(404).body(new ApiResponse("User not found", e.getMessage()));
         }

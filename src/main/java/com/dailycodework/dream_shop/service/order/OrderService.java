@@ -1,7 +1,6 @@
 package com.dailycodework.dream_shop.service.order;
 
 import com.dailycodework.dream_shop.dto.OrderDto;
-import com.dailycodework.dream_shop.dto.OrderItemDto;
 import com.dailycodework.dream_shop.enums.OrderStatus;
 import com.dailycodework.dream_shop.exception.ResourceNotFoundException;
 import com.dailycodework.dream_shop.model.Cart;
@@ -12,7 +11,6 @@ import com.dailycodework.dream_shop.repository.OrderRepo;
 import com.dailycodework.dream_shop.repository.ProductRepository;
 import com.dailycodework.dream_shop.service.carts.CartService;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -92,7 +90,8 @@ public class OrderService implements IOrderService {
         return orders.stream().map(this::convertToDto).toList();
     }
 
-    private OrderDto convertToDto(Order order) {
+    @Override
+    public OrderDto convertToDto(Order order) {
         return modelMapper.map(order, OrderDto.class);
     }
 }

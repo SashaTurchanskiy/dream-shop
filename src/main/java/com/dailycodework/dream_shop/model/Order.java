@@ -1,6 +1,7 @@
 package com.dailycodework.dream_shop.model;
 
 import com.dailycodework.dream_shop.enums.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -10,11 +11,14 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-
+/**
+ * 
+ */
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "orders")
+@JsonIgnoreProperties({"user"})
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +29,10 @@ public class Order {
     private OrderStatus orderStatus;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("order")
     private Set<OrderItem> orderItems = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
