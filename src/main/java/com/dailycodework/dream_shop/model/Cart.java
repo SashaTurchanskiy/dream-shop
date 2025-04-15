@@ -1,5 +1,6 @@
 package com.dailycodework.dream_shop.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,13 +20,12 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JsonIgnoreProperties("cart")
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CartItem> items = new HashSet<>();
 
     @OneToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties({"cart", "orders"})
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"cart", "orders", "password"})
     private User user;
 
     private BigDecimal totalAmount = BigDecimal.ZERO;
@@ -66,12 +66,23 @@ public class Cart {
     }
 
     public void addItem(CartItem item) {
-        items.add(item);
+        this.items.add(item);
         item.setCart(this);
+        updateTotalAmount();
     }
 
     public void removeItem(CartItem item) {
-        items.remove(item);
+        this.items.remove(item);
         item.setCart(null);
+        updateTotalAmount();
+    }
+    private void updateTotalAmount() {
+        this.totalAmount = items.stream().map(item -> {
+            BigDecimal unitPrice = item.getUnitPrice();
+            if (unitPrice == null) {
+                return  BigDecimal.ZERO;
+            }
+            return unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
+        }).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

@@ -3,19 +3,17 @@ package com.dailycodework.dream_shop.dto;
 import java.math.BigDecimal;
 
 public class CartItemDto {
-    private Long id;
+    private Long itemId;
     private Integer quantity;
     private BigDecimal unitPrice;
-    private BigDecimal totalPrice;
-    private Long cartId;
     private ProductDto product;
 
-    public Long getId() {
-        return id;
+    public Long getItemId() {
+        return itemId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
     }
 
     public Integer getQuantity() {
@@ -32,22 +30,6 @@ public class CartItemDto {
 
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
-    }
-
-    public BigDecimal getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public Long getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(Long cartId) {
-        this.cartId = cartId;
     }
 
     public ProductDto getProduct() {

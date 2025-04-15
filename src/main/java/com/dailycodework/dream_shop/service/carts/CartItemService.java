@@ -7,13 +7,11 @@ import com.dailycodework.dream_shop.model.CartItem;
 import com.dailycodework.dream_shop.model.Product;
 import com.dailycodework.dream_shop.repository.CartItemRepo;
 import com.dailycodework.dream_shop.repository.CartRepo;
-import com.dailycodework.dream_shop.repository.ProductRepository;
 import com.dailycodework.dream_shop.service.product.IProductService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @Service
 public class CartItemService  implements ICartItemService{

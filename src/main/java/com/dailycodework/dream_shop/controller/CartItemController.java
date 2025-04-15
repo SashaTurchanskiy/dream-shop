@@ -3,7 +3,6 @@ package com.dailycodework.dream_shop.controller;
 import com.dailycodework.dream_shop.exception.ProductNotFoundException;
 import com.dailycodework.dream_shop.exception.ResourceNotFoundException;
 import com.dailycodework.dream_shop.model.Cart;
-import com.dailycodework.dream_shop.model.CartItem;
 import com.dailycodework.dream_shop.model.User;
 import com.dailycodework.dream_shop.response.ApiResponse;
 import com.dailycodework.dream_shop.service.carts.ICartItemService;
@@ -11,8 +10,6 @@ import com.dailycodework.dream_shop.service.carts.ICartService;
 import com.dailycodework.dream_shop.service.user.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("${api.prefix}/cart-items")
@@ -34,7 +31,7 @@ public class CartItemController {
 
 
         try {
-                User user = userService.getUserById(1L);
+                User user = userService.getUserById(4L);
              Cart cart = cartService.initializeNewCart(user);
 
             cartItemService.addItemToCart(cart.getId(), productId, quantity);

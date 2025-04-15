@@ -1,6 +1,7 @@
 package com.dailycodework.dream_shop.service.product;
 
 import com.dailycodework.dream_shop.dto.ProductDto;
+import com.dailycodework.dream_shop.exception.AlreadyExistException;
 import com.dailycodework.dream_shop.exception.ProductNotFoundException;
 import com.dailycodework.dream_shop.exception.ResourceNotFoundException;
 import com.dailycodework.dream_shop.model.Product;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public interface IProductService {
 
-    Product addProduct(AddProductRequest req);
+    Product addProduct(AddProductRequest req) throws AlreadyExistException;
     List<Product> getAllProducts();
     Product getProductById(Long id) throws ProductNotFoundException, ResourceNotFoundException;
     void deleteProductById(Long id) throws ProductNotFoundException;
