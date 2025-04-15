@@ -1,6 +1,7 @@
 package com.dailycodework.dream_shop.controller;
 
 import com.dailycodework.dream_shop.dto.ProductDto;
+import com.dailycodework.dream_shop.exception.AlreadyExistException;
 import com.dailycodework.dream_shop.exception.ProductNotFoundException;
 import com.dailycodework.dream_shop.exception.ResourceNotFoundException;
 import com.dailycodework.dream_shop.model.Product;
@@ -42,12 +43,12 @@ public class ProductController {
         }
     }
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest product) throws Exception {
+    public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest product) {
         try {
             Product theProduct = productService.addProduct(product);
             return ResponseEntity.ok(new ApiResponse("Product added successfully", theProduct));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse("Failed to add product", e.getMessage()));
+        } catch (AlreadyExistException e) {
+            return ResponseEntity.status(409).body(new ApiResponse("Failed to add product", e.getMessage()));
         }
     }
     @PutMapping("/product/{productId}/update")

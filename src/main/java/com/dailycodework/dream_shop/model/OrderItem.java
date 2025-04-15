@@ -1,5 +1,6 @@
 package com.dailycodework.dream_shop.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import java.math.BigDecimal;
 
 @Entity
 @NoArgsConstructor
+@JsonIgnoreProperties({"order"})
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

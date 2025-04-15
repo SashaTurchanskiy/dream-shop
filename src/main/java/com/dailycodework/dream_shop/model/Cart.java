@@ -1,7 +1,10 @@
 package com.dailycodework.dream_shop.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -16,14 +19,16 @@ public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private BigDecimal totalAmount = BigDecimal.ZERO;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<CartItem> items =  new HashSet<>();
+    private Set<CartItem> items = new HashSet<>();
 
-    @OneToOne
+    @OneToOne(optional = false)
     @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"cart", "orders", "password"})
     private User user;
+
+    private BigDecimal totalAmount = BigDecimal.ZERO;
 
     public User getUser() {
         return user;
@@ -31,6 +36,9 @@ public class Cart {
 
     public void setUser(User user) {
         this.user = user;
+        if (user != null && user.getCart() != this) {
+            user.setCart(this);
+        }
     }
 
     public Long getId() {
@@ -41,20 +49,20 @@ public class Cart {
         this.id = id;
     }
 
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
     public Set<CartItem> getItems() {
         return items;
     }
 
     public void setItems(Set<CartItem> items) {
         this.items = items;
+    }
+
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public void addItem(CartItem item) {
@@ -68,7 +76,6 @@ public class Cart {
         item.setCart(null);
         updateTotalAmount();
     }
-
     private void updateTotalAmount() {
         this.totalAmount = items.stream().map(item -> {
             BigDecimal unitPrice = item.getUnitPrice();
@@ -78,5 +85,4 @@ public class Cart {
             return unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
         }).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-
 }

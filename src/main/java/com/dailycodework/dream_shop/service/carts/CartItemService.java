@@ -20,11 +20,13 @@ public class CartItemService  implements ICartItemService{
     private final IProductService productService;
     private final ICartService cartService;
 
+
     public CartItemService(CartItemRepo cartItemRepository, CartRepo cartRepository, IProductService productService, ICartService cartService) {
         this.cartItemRepository = cartItemRepository;
         this.cartRepository = cartRepository;
         this.productService = productService;
         this.cartService = cartService;
+
     }
 
     @Override
@@ -54,7 +56,9 @@ public class CartItemService  implements ICartItemService{
         cart.addItem(cartItem);
         cartItemRepository.save(cartItem);
         cartRepository.save(cart);
-    }
+
+
+}
 
     @Override
     public void removeItemFromCart(Long cartId, Long productId) throws ResourceNotFoundException {

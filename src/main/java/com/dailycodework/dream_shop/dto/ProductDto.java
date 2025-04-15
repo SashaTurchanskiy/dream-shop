@@ -1,13 +1,15 @@
 package com.dailycodework.dream_shop.dto;
 
-import com.dailycodework.dream_shop.model.Category;
+import com.dailycodework.dream_shop.dto.CategoryDto;
 import com.dailycodework.dream_shop.model.Image;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-
+/**
+ * 
+ */
 public class ProductDto {
     private Long id;
     private String name;
@@ -15,7 +17,7 @@ public class ProductDto {
     private BigDecimal price;
     private int inventory;
     private String description;
-    private Category category;
+    private CategoryDto category;
     private List<ImageDto> images;
 
     public Long getId() {
@@ -66,11 +68,11 @@ public class ProductDto {
         this.description = description;
     }
 
-    public Category getCategory() {
+    public CategoryDto getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(CategoryDto category) {
         this.category = category;
     }
 

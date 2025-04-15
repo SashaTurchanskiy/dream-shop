@@ -23,7 +23,8 @@ public class OrderController {
     public ResponseEntity<ApiResponse> createOrder(@RequestParam Long userId) {
         try {
             Order order = orderService.placeOrder(userId);
-            return ResponseEntity.ok(new ApiResponse("Order placed successfully", order));
+            OrderDto orderDto = orderService.convertToDto(order);
+            return ResponseEntity.ok(new ApiResponse("Order placed successfully", orderDto));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(500).body(new ApiResponse("Error occurred", e.getMessage()));
         }
