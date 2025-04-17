@@ -68,4 +68,6 @@ public class UserService implements IUserService {
     public UserDto convertToDto(User user) {
         return modelMapper.map(user, UserDto.class);
     }
+
+    //added user confing
 }
