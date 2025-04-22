@@ -3,16 +3,17 @@ package com.dailycodework.dream_shop.service.user;
 import com.dailycodework.dream_shop.dto.UserDto;
 import com.dailycodework.dream_shop.exception.AlreadyExistException;
 import com.dailycodework.dream_shop.exception.ResourceNotFoundException;
-import com.dailycodework.dream_shop.model.Cart;
 import com.dailycodework.dream_shop.model.User;
 import com.dailycodework.dream_shop.repository.UserRepo;
 import com.dailycodework.dream_shop.request.CreateUserRequest;
 import com.dailycodework.dream_shop.request.UserUpdateRequest;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
@@ -21,10 +22,12 @@ public class UserService implements IUserService {
 
     private final UserRepo userRepo;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepo userRepo, ModelMapper modelMapper) {
+    public UserService(UserRepo userRepo, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -40,7 +43,7 @@ public class UserService implements IUserService {
                 .map(req -> {
                     User user = new User();
                     user.setEmail(request.getEmail());
-                    user.setPassword(request.getPassword());
+                    user.setPassword(passwordEncoder.encode(request.getPassword()));
                     user.setFirstName(request.getFirstName());
                     user.setLastName(request.getLastName());
                     return  userRepo.save(user);
@@ -68,6 +71,15 @@ public class UserService implements IUserService {
     public UserDto convertToDto(User user) {
         return modelMapper.map(user, UserDto.class);
     }
+
+    @Override
+    public User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return userRepo.findByEmail(email);
+    }
+
+
 
     //added user confing
 }
