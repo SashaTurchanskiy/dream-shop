@@ -8,6 +8,7 @@ import com.dailycodework.dream_shop.response.ApiResponse;
 import com.dailycodework.dream_shop.service.carts.ICartItemService;
 import com.dailycodework.dream_shop.service.carts.ICartService;
 import com.dailycodework.dream_shop.service.user.UserService;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,14 +32,14 @@ public class CartItemController {
 
 
         try {
-                User user = userService.getUserById(4L);
+                User user = userService.getAuthenticatedUser();
              Cart cart = cartService.initializeNewCart(user);
-
-            cartItemService.addItemToCart(cart.getId(), productId, quantity);
+             cartItemService.addItemToCart(cart.getId(), productId, quantity);
             return ResponseEntity.ok(new ApiResponse("Item added to cart successfully", null));
         } catch (ProductNotFoundException | ResourceNotFoundException e) {
             return ResponseEntity.status(404).body(new ApiResponse(e.getMessage(), "Item not found"));
-
+        }catch (JwtException e) {
+            return ResponseEntity.status(401).body(new ApiResponse(e.getMessage(), "Unauthorized"));
         }
     }
     @DeleteMapping("/cart/{cartId}/item/{itemId}/remove")
