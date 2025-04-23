@@ -30,7 +30,7 @@ public class ShopConfig {
         this.userDetailsService = userDetailsService;
         this.authEntryPoint = authEntryPoint;
     }
-    private static final List<String> SECURED_URLS = List.of("");
+    private static final List<String> SECURED_URLS = List.of("/api/v1/carts/**", "/api/v1/cart-items/**");
 
     @Bean
     public ModelMapper modelMapper() {
