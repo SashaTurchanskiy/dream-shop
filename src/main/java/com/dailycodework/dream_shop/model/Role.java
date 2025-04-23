@@ -3,12 +3,11 @@ package com.dailycodework.dream_shop.model;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
 @Entity
-@NoArgsConstructor
+
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +19,9 @@ public class Role {
 
     public Role(String name) {
         this.name = name;
+    }
+
+    public Role() {
     }
 
     public Long getId() {
