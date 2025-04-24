@@ -10,6 +10,7 @@ import com.dailycodework.dream_shop.request.ProductUpdateRequest;
 import com.dailycodework.dream_shop.response.ApiResponse;
 import com.dailycodework.dream_shop.service.product.IProductService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class ProductController {
             return ResponseEntity.status(404).body(new ApiResponse(e.getMessage(), null));
         }
     }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest product) {
         try {
@@ -51,6 +53,7 @@ public class ProductController {
             return ResponseEntity.status(409).body(new ApiResponse("Failed to add product", e.getMessage()));
         }
     }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/product/{productId}/update")
     public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long productId, @RequestBody ProductUpdateRequest req){
         try {
@@ -60,6 +63,7 @@ public class ProductController {
             return ResponseEntity.status(404).body(new ApiResponse(e.getMessage(), null));
         }
     }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{productId}")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId){
         try {
