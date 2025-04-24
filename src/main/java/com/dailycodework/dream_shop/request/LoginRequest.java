@@ -2,28 +2,18 @@ package com.dailycodework.dream_shop.request;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class CreateUserRequest {
-    private String firstName;
-    private String lastName;
+public class LoginRequest {
     @NotBlank
     private String email;
     @NotBlank
     private String password;
 
-    public String getFirstName() {
-        return firstName;
+    public LoginRequest(String email, String password) {
+        this.email = email;
+        this.password = password;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public LoginRequest() {
     }
 
     public String getEmail() {
